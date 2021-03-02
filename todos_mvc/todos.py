@@ -1,52 +1,23 @@
+from flask import Blueprint
 from flask import Flask
 from flask import flash
 from flask import render_template
 from flask import request, redirect, url_for
-# from flask import redirect
-# from flask import url_for
-from flask_sqlalchemy import SQLAlchemy
-import flask_sqlalchemy
-
 from werkzeug.utils import secure_filename
 from base64 import b64encode
 
 
-import uuid
+from todos_mvc.model import Todo, db
+
+bp = Blueprint('todos', __name__)
 
 
-app = Flask(__name__)
-
-
-@app.route('/')
+@bp.route('/')
 def hello_world():
     return 'Hello, Todos App!'
 
 
-# secret key needed for session to support flash scope etc
-app.config['SECRET_KEY'] = 'todo-dev-secret'
-
-# /// = relative path, //// = absolute path
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./todos.db'
-# Flask-SQLAlchemy has its own event notification system that gets layered on top of SQLAlchemy.
-# To do this, it tracks modifications to the SQLAlchemy session. This takes extra resources, so
-# the option SQLALCHEMY_TRACK_MODIFICATIONS enables/disables the modification tracking system.
-# Suggest disabling it if not in use to save system resources.
-# To turn off the Flask-SQLAlchemy event system (and disable the warning):
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-
-class Todo(db.Model):
-    # id = db.Column(db.Integer, primary_key=True)
-    # use uuid as pk, use lambda to define an id generator
-    id = db.Column('id', db.Text(length=36), default=lambda: str(
-        uuid.uuid4()), primary_key=True)
-    title = db.Column(db.String(100))
-    complete = db.Column(db.Boolean)
-    pic = db.Column(db.LargeBinary, nullable=True)
-
-
-@app.route('/todos', methods=['GET'])
+@bp.route('/todos', methods=['GET'])
 def home():
     rs = Todo.query.all()
     todo_list = []
@@ -76,7 +47,7 @@ def home():
     return render_template('todos/home.html', todo_list=todo_list)
 
 
-@app.route('/todos/add', methods=['POST'])
+@bp.route('/todos/add', methods=['POST'])
 def add():
     title = request.form.get('title')
 
@@ -130,7 +101,7 @@ def add():
     return redirect(url_for('home'))
 
 
-@app.route('/todos/update/<todo_id>', methods=['POST', 'PUT'])
+@bp.route('/todos/update/<todo_id>', methods=['POST', 'PUT'])
 def update(todo_id):
     try:
         todo = Todo.query.filter_by(id=todo_id).first()
@@ -146,16 +117,10 @@ def update(todo_id):
     return redirect('/todos')
 
 
-# @app.route('/todos/delete/<int:todo_id>')
-@app.route('/todos/delete/<todo_id>', methods=['POST', 'DELETE'])
+# @bp.route('/todos/delete/<int:todo_id>')
+@bp.route('/todos/delete/<todo_id>', methods=['POST', 'DELETE'])
 def delete(todo_id):
     todo = Todo.query.filter_by(id=todo_id).first()
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for('home'))
-
-
-if __name__ == '__main__':
-    # db.drop_all()
-    db.create_all()
-    app.run(debug=True)

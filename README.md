@@ -8,16 +8,17 @@ pip install -r requirements.txt
 ```
 
 
-## todos app 
+## todos_mvc app 
 
 This is an MVC stack, with html templates.
-
 
 run app:
 
 ```sh
-cd todos
-python todos.py
+export FLASK_APP=todos_mvc
+export FLASK_ENV=development
+flask init-db
+flask run
 ```
 
 
