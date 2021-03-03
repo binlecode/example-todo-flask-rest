@@ -15,6 +15,20 @@
 
   <body>
     <div style="margin-top: 50px" class="ui container">
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="ui small teal message">
+          <div class="header">
+            You have some message:
+          </div>
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
       <h1 class="ui center aligned header">To Do App</h1>
 
       <form class="ui form" action="/todos/add" method="post" enctype="multipart/form-data">
