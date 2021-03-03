@@ -49,10 +49,11 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # initialize db
+    app.logger.info('sqlalchemy started database sync')
     with app.app_context():
+        # db.drop_all()
         db.create_all()
-
-    # from todos_mvc import model
+    app.logger.info('sqlalchemy completed database sync')
 
     from . import todos
     app.register_blueprint(todos.bp)

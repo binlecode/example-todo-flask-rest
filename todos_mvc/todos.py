@@ -1,3 +1,4 @@
+from threading import currentThread
 from flask import Blueprint
 from flask import Flask
 from flask import flash
@@ -5,11 +6,15 @@ from flask import render_template
 from flask import request, redirect, url_for
 from werkzeug.utils import secure_filename
 from base64 import b64encode
+from flask import current_app
 
+import logging
+LOG = logging.getLogger(__name__)
 
 from todos_mvc.model import Todo, db
 
 bp = Blueprint('todos', __name__)
+
 
 
 @bp.route('/')
@@ -29,9 +34,10 @@ def home():
         }
 
         try:
-            t['img'] = b64encode(todo.pic).decode("utf-8")
+            if todo.pic:
+                t['img'] = b64encode(todo.pic).decode("utf-8")
         except Exception as e:
-            print('>> error decoding image', e)
+            current_app.logger.error('error transcoding image', e)
 
         todo_list.append(t)
 
@@ -53,7 +59,7 @@ def add():
 
     file_err = None
     if 'pic' not in request.files:
-        print('>> no file uploaded')
+        LOG.debug('>> no file uploaded')
         flash('no file uploaded')
     else:
         file = request.files['pic']
@@ -62,14 +68,14 @@ def add():
         # submit an empty part without filename
         if file.filename == '':
             flash('no file selected for upload')
-            print('>> no file selected for upload')
+            LOG.debug('>> no file selected for upload')
         filename = secure_filename(file.filename)
 
-        # check file is not as easy
+        # checking file size, memory efficiently
         file_err = None
         # first try check browser content length if given
         if file.content_length:
-            print('>> file content_length: ', file.content_length)
+            LOG.debug(f'>> file content_length: {file.content_length}')
             if file.content_length > 1000000:
                 file_err = 'file size is too large: ' + file.content_length
         else:
@@ -79,7 +85,7 @@ def add():
             file.seek(0, 2)  # seek to end
             size = file.tell()
             file.seek(pos)  # back to original position
-            print('>> file size by seeking: ', size)
+            LOG.debug(f'>> file size by seeking: {size}')
             if size > 1000000:
                 # size_err = f'file size is too large: {size}'
                 file_err = 'file size is too large'
@@ -88,17 +94,21 @@ def add():
 
     if file_err:
         flash(file_err)
-        print(file_err)
+        LOG.warn(file_err)
+        new_todo.pic = None
     else:
+        LOG.debug('>> file is good, save to todo')
         blob = file.read()
         # todo: be careful not to read too much data into memory
         # this is not considerred safe to be used for size check
         # size = len(blob)
         new_todo.pic = blob
 
+
+
     db.session.add(new_todo)
     db.session.commit()
-    return redirect(url_for('home'))
+    return redirect(url_for('todos.home'))
 
 
 @bp.route('/todos/update/<todo_id>', methods=['POST', 'PUT'])
@@ -111,9 +121,11 @@ def update(todo_id):
             todo.title = new_title
             todo.complete = new_complete
             db.session.commit()
+        current_app.logger.debug(f'>> todo [{todo.id}] was updated')
+        flash(f'a todo [{todo.id}] was updated')
     except Exception as e:
-        print('Failed to update todo:', todo)
-        print(e)
+        LOG.error(f'Failed to update todo: {todo}')
+        LOG.error(e)
     return redirect('/todos')
 
 
@@ -123,4 +135,5 @@ def delete(todo_id):
     todo = Todo.query.filter_by(id=todo_id).first()
     db.session.delete(todo)
     db.session.commit()
-    return redirect(url_for('home'))
+    flash('a todo was deleted')
+    return redirect(url_for('todos.home'))
