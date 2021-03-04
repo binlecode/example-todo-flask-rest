@@ -25,7 +25,10 @@ def create_app(test_config=None):
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     if test_config is None:
-        # load config.py, if exists
+        # load default config.py from project root
+        # app.config.from_object('config')
+
+        # load config.py from current folder, if exists
         try:
             from . import config
             app.config.from_object(config)
@@ -34,7 +37,7 @@ def create_app(test_config=None):
 
         # load instance/config.py file
         # when instance_relative_config=True is set in Flask() call
-        # slient mode to mute error if file not found in instance folder
+        # slient=True to mute error if file not found in instance folder
         app.config.from_pyfile('config.py', silent=True)
 
     else:

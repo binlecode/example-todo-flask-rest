@@ -18,7 +18,9 @@ pip install -r requirements.txt
 
 This is an MVC stack, with html templates.
 
-run app:
+This app has an example of saving a web uploaded file to a BLOB db column.  
+
+Run app:
 
 ```sh
 export FLASK_APP=todos_mvc
@@ -58,11 +60,11 @@ container server is at http://127.0.0.1:8000/todos
 
 
 
-
-
 ## todo_rest_sql app
 
 This todo app is REST only, no web html UI.
+
+Also, this app shows raw sql executions for cruds.
 
 App structure follows: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 
