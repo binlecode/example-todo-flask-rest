@@ -4,29 +4,39 @@
 # - it will contain the application factory,
 # - and it tells Python that the flaskr directory should be treated as a package.
 #
-# this todos app is following app factory/blueprint pattern
+# this todos app is following app-factory/blueprint pattern
+# app-factory prevents app from being a global variable, and also helps
+# creating app for test environment
 #
 
 import os
 from flask import Flask
+import logging
+LOG = logging.getLogger(__file__)
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    app.config['SECRET_KEY'] = 'todo-dev-secret'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./todos.db'
-    # Flask-SQLAlchemy has its own event notification system that gets layered on top of SQLAlchemy.
-    # To do this, it tracks modifications to the SQLAlchemy session. This takes extra resources, so
-    # the option SQLALCHEMY_TRACK_MODIFICATIONS enables/disables the modification tracking system.
-    # Suggest disabling it if not in use to save system resources.
-    # To turn off the Flask-SQLAlchemy event system (and disable the warning):
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # secret key will be used for securely signing the session cookie
+    # app.config['SECRET_KEY'] = 'todo-dev-secret'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./todos.db'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     if test_config is None:
-        # load the instance config, if it exists, when not testing
+        # load config.py, if exists
+        try:
+            from . import config
+            app.config.from_object(config)
+        except Exception as e:
+            LOG.error(f'ERROR loading config: {e}')
+
+        # load instance/config.py file
+        # when instance_relative_config=True is set in Flask() call
+        # slient mode to mute error if file not found in instance folder
         app.config.from_pyfile('config.py', silent=True)
+
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)

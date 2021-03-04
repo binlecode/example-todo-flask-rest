@@ -17,3 +17,6 @@ class Todo(db.Model):
     title = db.Column(db.String(100))
     complete = db.Column(db.Boolean)
     pic = db.Column(db.LargeBinary, nullable=True)
+
+    def __repr__(self):
+        return '<Todo {}>'.format(self.title)
