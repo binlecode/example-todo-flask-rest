@@ -13,3 +13,8 @@ SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
 # Suggest disabling it if not in use to save system resources.
 # To turn off the Flask-SQLAlchemy event system (and disable the warning):
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# set global max request size, including file upload
+MAX_CONTENT_LENGTH = 1024 * 1024
+# limit upload file extensions
+UPLOAD_EXTENSIONS = ['.jpg', '.png', '.gif']

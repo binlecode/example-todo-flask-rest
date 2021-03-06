@@ -7,11 +7,13 @@ from flask import request, redirect, url_for
 from werkzeug.utils import secure_filename
 from base64 import b64encode
 from flask import current_app
+import os
 
 import logging
 LOG = logging.getLogger(__name__)
 
 from todos_mvc.model import Todo, db
+
 
 bp = Blueprint('todos', __name__)
 
@@ -59,20 +61,21 @@ def add():
 
     file_err = None
     if 'pic' not in request.files:
-        LOG.debug('>> no file uploaded')
-        flash('no file uploaded')
+        file_err = 'no file uploaded'
     else:
         file = request.files['pic']
-
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
-            flash('no file selected for upload')
-            LOG.debug('>> no file selected for upload')
-        filename = secure_filename(file.filename)
+            file_err = 'no file selected for upload' 
+        else:
+            filename = secure_filename(file.filename)
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
+                file_err = 'bad file selected for upload'
 
+    if file_err == None:
         # checking file size, memory efficiently
-        file_err = None
         # first try check browser content length if given
         if file.content_length:
             LOG.debug(f'>> file content_length: {file.content_length}')
@@ -103,8 +106,6 @@ def add():
         # this is not considerred safe to be used for size check
         # size = len(blob)
         new_todo.pic = blob
-
-
 
     db.session.add(new_todo)
     db.session.commit()
