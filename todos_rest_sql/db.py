@@ -2,10 +2,12 @@ import sqlite3
 
 import click
 # g is simple namespace object that used to store
-# data that keeps track of application level
+# data that can access application level
 # data during a request.
+# g can be used as as request scope storage and is reset for each request
 # g has same lifetime as application context
 # current_app is a proxy to application context
+# 
 from flask import current_app, g
 from flask.cli import cli, with_appcontext
 
