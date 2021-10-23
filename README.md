@@ -70,7 +70,7 @@ container server is at http://127.0.0.1:8000/todos
 
 This todo app is REST only, no web html UI.
 
-Also, this app shows raw sql executions for cruds.
+Also, this app uses raw sql executions for cruds.
 
 App structure follows: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 
