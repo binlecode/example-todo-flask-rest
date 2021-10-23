@@ -1,3 +1,4 @@
+from todos_mvc.model import Todo, User, db
 from threading import currentThread
 from flask import Blueprint
 from flask import Flask
@@ -9,30 +10,26 @@ from base64 import b64encode
 from flask import current_app
 import os
 
+from sqlalchemy import desc
+
 import logging
 LOG = logging.getLogger(__name__)
-
-from todos_mvc.model import Todo, db
 
 
 bp = Blueprint('todos', __name__)
 
 
-
-@bp.route('/')
-def hello_world():
-    return 'Hello, Todos App!'
-
-
 @bp.route('/todos', methods=['GET'])
 def home():
-    rs = Todo.query.all()
+    rs = Todo.query.order_by(desc(Todo.created_at)).all()
+    # rs = Todo.query.all()
     todo_list = []
     for todo in rs:
         t = {
             'id': todo.id,
             'title': todo.title,
             'complete': todo.complete,
+            'assignees': todo.assignees,
         }
 
         try:
@@ -52,7 +49,11 @@ def home():
     #         'img': b64encode(todo.pic).decode("utf-8")
     #     } for todo in Todo.query.all()
     # ]
-    return render_template('todos/home.html', todo_list=todo_list)
+
+    # get all users as candidate assignees
+    user_list = User.query.all()
+
+    return render_template('todos/home.html', todo_list=todo_list, user_list=user_list)
 
 
 @bp.route('/todos/add', methods=['POST'])
@@ -67,7 +68,7 @@ def add():
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
-            file_err = 'no file selected for upload' 
+            file_err = 'no file selected for upload'
         else:
             filename = secure_filename(file.filename)
             file_ext = os.path.splitext(filename)[1]
@@ -94,6 +95,9 @@ def add():
                 file_err = 'file size is too large'
 
     new_todo = Todo(title=title, complete=False)
+    assignee_ids = request.form.getlist('assignee_ids')
+    assignees = User.query.filter(User.id.in_(assignee_ids)).all()
+    new_todo.assignees = assignees
 
     if file_err:
         flash(file_err)
@@ -118,9 +122,13 @@ def update(todo_id):
         todo = Todo.query.filter_by(id=todo_id).first()
         new_title = request.form.get('title')
         new_complete = bool(request.form.get('complete'))
+        new_assignee_ids = request.form.getlist('assignee_ids')
+        new_assignees = User.query.filter(User.id.in_(new_assignee_ids)).all()
+
         if todo:
             todo.title = new_title
             todo.complete = new_complete
+            todo.assignees = new_assignees
             db.session.commit()
         current_app.logger.debug(f'>> todo [{todo.id}] was updated')
         flash(f'a todo [{todo.id}] was updated')

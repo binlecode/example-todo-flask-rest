@@ -3,6 +3,7 @@
 ## pyenv and virtualenv
 
 ```sh
+# create .python-version file with version 3.7.2
 pyenv local 3.7.2
 # verify python version
 which python
@@ -37,6 +38,11 @@ export FLASK_DEBUG=1
 ```
 by default, reloader is enabled when debug is enabled.
 
+
+to run in terminal console
+```sh
+python -m flask shell
+```
 
 to run in gunicorn for a production live env
 ```sh
@@ -88,3 +94,9 @@ flask run
 ```
 
 No need to re-run 'init-db' for successive runs unless a db reset is needed.
+
+
+
+
+
+

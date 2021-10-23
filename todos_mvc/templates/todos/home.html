@@ -1,83 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Todo App</title>
-    <!-- add Semantic UI -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-  </head>
+{% extends 'layout.html' %}
 
-  <body>
-    <div style="margin-top: 50px" class="ui container">
+{% block content %}
 
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="ui small teal message">
-          <div class="header">
-            You have some message:
-          </div>
-          {% for message in messages %}
-            <p>{{ message }}</p>
-          {% endfor %}
-        </div>
-        {% endif %}
-      {% endwith %}
-
-      <h1 class="ui center aligned header">To Do App</h1>
-
-      <form class="ui form" action="/todos/add" method="post" enctype="multipart/form-data">
-        <div class="field">
-          <label>Todo Title</label>
-          <input type="text" name="title" placeholder="Enter Todo..." />
-          <br />
-          <input type="file" name="pic" accept="image/*" />
-          <br />
-        </div>
-        <button class="ui blue button" type="submit">Add</button>
-      </form>
-
-      <hr />
-
-      {% for todo in todo_list %}
-      <div class="ui segment">
-        <p class="ui big header">
-          {{ todo.id }} | {{ todo.title }} 
-          {% if todo.complete == False %}
-          <span class="ui gray label">Not Complete</span>
-          {% else %}
-          <span class="ui green label">Completed</span>
-          {% endif %}
-
-          {% if todo.img %}
-          <div>
-            <img src="data:;base64,{{ todo.img }}" width="240" />
-          </div>
-          {% endif %}
-        </p>
-
-        <!-- it should be PUT, but form tag only allows GET and POST -->
-        <!-- todo: replace with ajax PUT -->
-        <form method="post" action="/todos/update/{{todo.id}}">
-          new title
-          <input type="text" value="{{todo.title}}" name="title" />
-          <input type="checkbox" value="{{todo.complete}}" name="complete" />
-          <span>complete</span>
-          <button class="ui blue button" type="submit">Update</button>
-        </form>
-
-        <!-- again, html form has no DELETE method -->
-        <!-- todo: replace ajax DELETE -->
-        <form method="POST" action="/todos/delete/{{todo.id}}">
-          <button class="ui red button" type="submit">Delete</button>
-        </form>
-      </div>
-      {% endfor %}
+  <form class="ui form" action="/todos/add" method="post" enctype="multipart/form-data">
+    <div class="field">
+      <label>Todo title</label>
+      <input type="text" name="title" placeholder="Enter Todo..." />
     </div>
-  </body>
-</html>
+    <div class="field">
+      <label for="file">Todo image</label>
+      <input type="file" name="pic" accept="image/*" />
+    </div>
+    <div class="field">
+      <label for="assginee_ids">Assign to</label>
+      <select name="assignee_ids" class="selection" multiple="multiple">
+        {% for u in user_list %}
+        <option value="{{u.id}}">{{ u.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="ui blue button" type="submit">Add</button>
+  </form>
+
+  <hr />
+
+  {% for todo in todo_list %}
+  <div class="ui segment">
+    <p class="ui big header">
+      {{ todo.id }} | {{ todo.title }} 
+      {% if todo.complete == False %}
+      <span class="ui gray label">Not Complete</span>
+      {% else %}
+      <span class="ui green label">Completed</span>
+      {% endif %}
+
+      {% if todo.img %}
+      <div>
+        <img src="data:;base64,{{ todo.img }}" width="240" />
+      </div>
+      {% endif %}
+
+      <!-- {% if todo.assignees %}
+      <p>Assigned to:</p>
+      <ul>
+        {% for user in todo.assignees %}
+        <li>
+          {{ user.username }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %} -->
+    </p>
+
+    <!-- it should be PUT, but form tag only allows GET and POST -->
+    <!-- todo: replace with ajax PUT -->
+    <form method="post" action="/todos/update/{{todo.id}}">
+      <div>
+        title:
+        <input type="text" value="{{todo.title}}" name="title" />
+        <input type="checkbox" value="{{todo.complete}}" name="complete" />
+        <span>complete</span>
+      </div>
+      
+      <div class="field">
+        <label for="assginee_ids">assignees:</label>
+        <select name="assignee_ids" class="" multiple="multiple">
+          {% for u in user_list %}
+            {% if u in todo.assignees %}
+              <option value="{{u.id}}" selected="true">{{ u.username }}</option>
+            {% else %}
+              <option value="{{u.id}}">{{ u.username }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <button class="ui blue button" type="submit">Update</button>
+    </form>
+
+    <!-- again, html form has no DELETE method -->
+    <!-- todo: replace with ajax DELETE -->
+    <form method="POST" action="/todos/delete/{{todo.id}}">
+      <button class="ui red button" type="submit">Delete</button>
+    </form>
+  </div>
+  {% endfor %}
+
+{% endblock %} 
+
