@@ -1,7 +1,7 @@
 
+## project bootstrap
 
-## pyenv and virtualenv
-
+Environment is set by python 3 native venv:
 ```sh
 # create .python-version file with version 3.7.2
 pyenv local 3.7.2
@@ -14,14 +14,25 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+To activate venv:
+```sh
+source venv/bin/activate
+```
+
+To deactivate venv:
+```sh
+(venv) > deactivate
+```
 
 ## todos_mvc app 
 
 This is an MVC stack, with html templates.
+Sementic-UI is used for page styles.
 
 This app has an example of saving a web uploaded file to a BLOB db column.  
 
-Run app:
+
+To run app:
 
 ```sh
 export FLASK_APP=todos_mvc
@@ -31,7 +42,7 @@ export FLASK_ENV=development
 python -m flask run
 ```
 
-debug and reloader are enabled by development env, 
+To debug and reloader are enabled by development env, 
 if choose not to use dev env:
 ```sh
 export FLASK_DEBUG=1
@@ -39,7 +50,7 @@ export FLASK_DEBUG=1
 by default, reloader is enabled when debug is enabled.
 
 
-to run in terminal console
+To run in terminal console
 ```sh
 python -m flask shell
 ```
