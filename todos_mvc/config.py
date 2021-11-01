@@ -7,6 +7,9 @@ SECRET_KEY = 'todo-dev-secret'
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
     'sqlite:///' + os.path.join(basedir, 'todos.db')
 
+# enable query sql printout
+SQLALCHEMY_ECHO = True
+
 # Flask-SQLAlchemy has its own event notification system that gets layered on top of SQLAlchemy.
 # To do this, it tracks modifications to the SQLAlchemy session. This takes extra resources, so
 # the option SQLALCHEMY_TRACK_MODIFICATIONS enables/disables the modification tracking system.

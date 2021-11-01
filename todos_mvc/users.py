@@ -34,6 +34,13 @@ def index():
 @bp.route('/users/add', methods=['POST'])
 def add():
     username = request.form.get('username')
+    password = request.form.get('password')
+    password_check = request.form.get('password_check')
+
+    if password != password_check:
+        flash(f'password check faild')
+        return redirect(url_for('users.index'))
+
     new_user = User(username=username)
 
     db.session.add(new_user)

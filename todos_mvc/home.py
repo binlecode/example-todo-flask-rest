@@ -18,12 +18,12 @@ LOG = logging.getLogger(__name__)
 start_time = time.time()
 
 
-bp = Blueprint('api', __name__)
+bp = Blueprint('home', __name__)
 
 
 @bp.route('/')
-def hello():
-    return 'Hello, Todos App with Flask!'
+def index():
+    return 'Hello, Todos MVC App with Flask!'
 
 
 @bp.route('/health')

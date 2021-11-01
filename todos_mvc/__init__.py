@@ -9,11 +9,13 @@
 # creating app for test environment
 #
 
+from todos_mvc.model import User, db
 from flask.helpers import make_response
 from flask import render_template
 from flask import Flask
-from flask import g
-from flask import request
+from flask import (
+    g, request, session
+)
 import os
 import logging
 import time
@@ -74,14 +76,17 @@ def create_app(test_config=None):
 
     # initialize blueprints
 
-    from . import api
-    app.register_blueprint(api.bp)
+    from . import home
+    app.register_blueprint(home.bp)
 
     from . import todos
     app.register_blueprint(todos.bp)
 
     from . import users
     app.register_blueprint(users.bp)
+
+    from . import auth
+    app.register_blueprint(auth.bp)
 
     # app.add_url_rule('/', endpoint='index')
 
@@ -91,6 +96,8 @@ def create_app(test_config=None):
     @app.before_request
     def get_req_start_time():
         app.logger.debug('before_request interceptor called')
+
+        # log request details
         # request.args is of MultiDict type, need to getlist from each key
         app.logger.debug('request args:')
         for k in request.args.keys():
@@ -101,6 +108,16 @@ def create_app(test_config=None):
             app.logger.debug(f' > {k} : {request.form.getlist(k)}')
         g.start = time.time()
         # todo: load session, user, etc info in this interceptor
+
+        # try to fetch session user
+        user_id = session.get('user_id')
+        if user_id is None:
+            g.user = None
+        else:
+            # this could return none
+            g.user = User.query.filter_by(id=user_id).first()
+        app.logger.debug(f'getting g.user: {g.user}')
+            
 
     @app.after_request
     def log_request(response):

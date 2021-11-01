@@ -6,7 +6,7 @@ import flask_sqlalchemy
 import uuid
 
 from sqlalchemy import DateTime
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref, validates
 from sqlalchemy.sql import func
 
 db = SQLAlchemy()
@@ -58,6 +58,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column('id', db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
+    password = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

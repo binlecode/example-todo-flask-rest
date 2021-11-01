@@ -18,6 +18,9 @@
 
   <body>
     <div style="margin-top: 50px" class="ui container">
+
+
+
       <h1 class="ui center aligned header">
         {{ title if title else 'Todo App' }}
       </h1>
@@ -25,22 +28,19 @@
       <!-- include a partial template -->
       {% include 'navigation.html' %}
 
-      <!-- message section -->
-      <div>
-        {% with messages = get_flashed_messages() %} {% if messages %}
-        <div class="ui small teal message">
-          <div class="header">You have some message:</div>
-          {% for message in messages %}
-          <p>{{ message }}</p>
-          {% endfor %}
-        </div>
-        {% endif %} {% endwith %}
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <div class="ui small teal message">
+        <div class="header">You have some message:</div>
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
       </div>
+      {% endif %} {% endwith %}
 
       {% block content %}{% endblock %}
     </div>
 
-    <div id="footer" class="ui footer">
+    <div id="footer" class="ui inverted vertical footer segment">
       <p>placeholder for footer</p>
     </div>
   </body>
