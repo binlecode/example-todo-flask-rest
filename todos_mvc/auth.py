@@ -27,7 +27,8 @@ def register():
             error = 'User {} is already registered.'.format(username)
 
         if error is None:
-            user = User(username=username, password=generate_password_hash(password))
+            user = User(username=username,
+                        password=generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
             flash(f'a user [{user.username}] was successfully registered')
@@ -67,10 +68,6 @@ def logout():
     session.clear()
     return redirect(url_for('home.index'))
 
-
-@bp.before_app_request
-def load_logged_in_user():
-    pass
 
 def login_required(view):
     """A decorator to apply to views that needs user to be logged in.

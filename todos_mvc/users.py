@@ -1,4 +1,6 @@
 from todos_mvc.model import Todo, User, db
+from todos_mvc.auth import login_required
+
 from threading import currentThread
 from flask import Blueprint
 from flask import Flask
@@ -6,6 +8,7 @@ from flask import flash
 from flask import render_template
 from flask import request, redirect, url_for
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 from base64 import b64encode
 from flask import current_app
 import os
@@ -37,14 +40,27 @@ def add():
     password = request.form.get('password')
     password_check = request.form.get('password_check')
 
-    if password != password_check:
-        flash(f'password check faild')
+    error = None
+    if not username:
+        error = 'Username is required'
+    elif not password:
+        error = 'Password is required'
+    elif password != password_check:
+        error = 'Password check faild'
+    
+    if error:
+        flash(error)
         return redirect(url_for('users.index'))
 
-    new_user = User(username=username)
+    if User.query.filter_by(username=username).first() is not None:
+        error = 'User {} is already registered.'.format(username)
+        flash(error)
+        return redirect(url_for('users.index'))
 
+    new_user = User(username=username, password=generate_password_hash(password))
     db.session.add(new_user)
     db.session.commit()
+    flash(f'a user [{new_user.username}] was successfully added')
     return redirect(url_for('users.index'))
 
 

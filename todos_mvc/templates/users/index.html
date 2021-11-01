@@ -4,8 +4,16 @@
 
     <form class="ui form" action="/users/add" method="post" enctype="multipart/form-data">
       <div class="field">
-        <label>User name</label>
+        <label>Username</label>
         <input type="text" name="username" placeholder="Enter Username..." />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" />
+      </div>
+      <div class="field">
+        <label>Re-enter Password</label>
+        <input type="password" name="password_check" />
       </div>
       <button class="ui blue button" type="submit">Add</button>
     </form>

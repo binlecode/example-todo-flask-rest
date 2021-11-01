@@ -93,22 +93,53 @@ def create_app(test_config=None):
     # add global logging middleware
 
     # use before_request interceptor to load g context
+
     @app.before_request
-    def get_req_start_time():
-        app.logger.debug('before_request interceptor called')
+    def log_req_and_get_start_time():
+        app.logger.debug('before_request > get_req_start_time')
+
+        # timestamp = rfc3339(dt, utc=True)
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        host = request.host.split(':', 1)[0]
+        args = dict((k, request.args.getlist(k)) for k in request.args.keys())
+        form = dict((k, request.form.getlist(k)) for k in request.form.keys())
+
+        log_details = {
+            'method': request.method,
+            'path': request.path,
+            'ip': ip,
+            'host': host,
+            'params': args,
+            'form': form
+        }
+
+        request_id = request.headers.get('X-Request-ID')
+        if request_id:
+            log_details['request_id'] = request_id
+
+        if request.form:
+            log_details['request_form'] = request.form.to_dict()
 
         # log request details
         # request.args is of MultiDict type, need to getlist from each key
-        app.logger.debug('request args:')
-        for k in request.args.keys():
-            app.logger.debug(f' > {k} : {request.args.getlist(k)}')
+        # app.logger.debug('request args:')
+        # for k in request.args.keys():
+        #     app.logger.debug(f' > {k} : {request.args.getlist(k)}')
         # request.form is MultiDict type too
-        app.logger.debug('request.form:')
-        for k in request.form.keys():
-            app.logger.debug(f' > {k} : {request.form.getlist(k)}')
-        g.start = time.time()
-        # todo: load session, user, etc info in this interceptor
+        # app.logger.debug('request.form:')
+        # for k in request.form.keys():
+        #     app.logger.debug(f' > {k} : {request.form.getlist(k)}')
 
+        app.logger.debug('>> request :: ' + str(log_details))
+
+        g.start = time.time()
+
+    # we can have multiple interceptors, they are executed in the order
+    # they are defined
+
+    @app.before_request
+    def load_logged_in_user():
+        app.logger.debug('before_request > load_logged_in_user')
         # try to fetch session user
         user_id = session.get('user_id')
         if user_id is None:
@@ -117,10 +148,9 @@ def create_app(test_config=None):
             # this could return none
             g.user = User.query.filter_by(id=user_id).first()
         app.logger.debug(f'getting g.user: {g.user}')
-            
 
     @app.after_request
-    def log_request(response):
+    def log_resp(response):
         if request.path == '/favicon.ico':
             return response
         elif request.path.startswith('/static'):
@@ -130,32 +160,13 @@ def create_app(test_config=None):
         duration = round(now - g.start, 2)
         dt = datetime.datetime.fromtimestamp(now)
         # timestamp = rfc3339(dt, utc=True)
-
-        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        host = request.host.split(':', 1)[0]
-        args = dict((k, request.args.getlist(k)) for k in request.args.keys())
-        form = dict((k, request.form.getlist(k)) for k in request.form.keys())
-
-        log_params = {
-            'method': request.method,
-            'path': request.path,
+        log_details = {
             'status': response.status_code,
             'duration': duration,
-            'time': dt,
-            'ip': ip,
-            'host': host,
-            'params': args,
-            'form': form
+            'time': dt
         }
+        app.logger.debug('>> response :: ' + str(log_details))
 
-        request_id = request.headers.get('X-Request-ID')
-        if request_id:
-            log_params['request_id'] = request_id
-
-        if request.form:
-            log_params['request_form'] = request.form.to_dict()
-
-        print('>> log request :: ' + str(log_params))
         return response
 
     # errorhandler 404 needs to registered outside of blueprint
