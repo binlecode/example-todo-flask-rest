@@ -7,7 +7,7 @@ import click
 # g can be used as as request scope storage and is reset for each request
 # g has same lifetime as application context
 # current_app is a proxy to application context
-# 
+#
 from flask import current_app, g
 from flask.cli import cli, with_appcontext
 
@@ -36,6 +36,7 @@ def init_db():
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
+
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
@@ -49,4 +50,3 @@ def init_app(app):
     app.teardown_appcontext(close_db)
     # adds command function that can be called with flask command
     app.cli.add_command(init_db_command)
-

@@ -4,8 +4,8 @@
 # serve todos endpoints by sql queries no models
 # provides REST endpoints instead of html
 #
-# to run
-# python todos_rest_sql_raw.py
+# to run, at project root folder:
+# python todos_rest_singlefile/todos_rest_sql_raw.py
 # this script will create a sqlite3 `todos_rest_sql_raw.db` file
 #
 
@@ -16,7 +16,13 @@ import uuid
 from flask import Flask, request, Response
 import sqlite3
 import os
+
+import logging
+LOG = logging.getLogger(__name__)
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+LOG.debug(f'>> basedir: {basedir}')
 
 
 # reuse the sqlite3 db created by todos.py app

@@ -38,7 +38,7 @@ To run app:
 export FLASK_APP=todos_mvc
 export FLASK_ENV=development
 # use -m to avoid 'flask command not found' error
-# -m flag enables python recognize 3rd perty modules
+# -m flag enables python torecognize 3rd perty modules
 python -m flask run
 ```
 
@@ -55,7 +55,7 @@ To run in terminal console
 python -m flask shell
 ```
 
-to run in gunicorn for a production live env
+to run in gunicorn for a production like env
 ```sh
 pip install gunicorn
 # set worker count to 4 for a more prouction like concurrent demand
