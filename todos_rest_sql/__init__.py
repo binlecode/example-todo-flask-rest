@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 app.config.from_mapping(
     SECRET_KEY='dev',
-    DATABASE=os.path.join(basedir, 'todos_rest_sql.db'),
+    DATABASE=os.path.join(basedir, 'todos.db'),
 )
 
 

@@ -1,13 +1,6 @@
+# a minimal single script flask app
 #
-# stand-alone single script flask app
-#
-# serve todos endpoints by sql queries no models
-# provides REST endpoints instead of html
-#
-# to run, at project root folder:
-# python todos_rest_singlefile/todos_rest_sql_raw.py
-# this script will create a sqlite3 `todos_rest_sql_raw.db` file
-#
+# serve todos REST endpoints with raw sql without models
 
 
 from werkzeug.exceptions import HTTPException
@@ -27,15 +20,15 @@ LOG.debug(f'>> basedir: {basedir}')
 
 # reuse the sqlite3 db created by todos.py app
 # DB_PATH = './todos_rest_sql_raw.db'
-DB_PATH = os.path.join(basedir, 'todos_rest_sql_raw.db')
+DB_PATH = os.path.join(basedir, 'todos.db')
 
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello Todo App (REST + Sql)!'
+def hello():
+    return 'Hi! This is a mini Todos (REST + Sql) single-file app.'
 
 
 @app.route('/todos')
@@ -48,7 +41,7 @@ def get_todos():
         conn.row_factory = lambda C, R: {c[0]: R[i]
                                          for i, c in enumerate(C.description)}
 
-        # Once a connection has been established, we use the cursor
+        # Once a connection is established, we use the cursor
         # object to execute queries
         c = conn.cursor()
 
