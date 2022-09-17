@@ -6,7 +6,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from todos_mvc.model import User, db
+from mvc.model import User, db
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')

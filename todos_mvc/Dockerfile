@@ -5,16 +5,14 @@ RUN adduser -D todosmvc
 WORKDIR /home/todosmvc
 
 COPY requirements.txt requirements.txt
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn
+RUN pip install -r requirements.txt
+RUN pip install gunicorn
 
-COPY todos_mvc todos_mvc
-# COPY migrations migrations
+COPY mvc mvc
 COPY boot.sh ./
 RUN chmod +x boot.sh
 
-ENV FLASK_APP todos_mvc
+ENV FLASK_APP mvc
 
 RUN chown -R todosmvc:todosmvc ./
 USER todosmvc

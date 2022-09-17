@@ -1,4 +1,4 @@
-from todos_mvc.model import Todo, User, db
+from mvc.model import Todo, User, db
 from threading import currentThread
 from flask import Blueprint
 from flask import Flask

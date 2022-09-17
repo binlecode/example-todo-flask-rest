@@ -9,7 +9,7 @@
 # creating app for test environment
 #
 
-from todos_mvc.model import User, db
+from mvc.model import User, db
 from flask.helpers import make_response
 from flask import render_template
 from flask import Flask
@@ -63,7 +63,7 @@ def create_app(test_config=None):
     # /// = relative path, //// = absolute path
 
     # setup db conn
-    from todos_mvc.model import db
+    from mvc.model import db
     db.init_app(app)
 
     # initialize db

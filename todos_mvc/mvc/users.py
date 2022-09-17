@@ -1,5 +1,5 @@
-from todos_mvc.model import Todo, User, db
-from todos_mvc.auth import login_required
+from mvc.model import Todo, User, db
+from mvc.auth import login_required
 
 from threading import currentThread
 from flask import Blueprint
