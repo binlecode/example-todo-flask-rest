@@ -40,8 +40,9 @@ def init_db():
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
+    click.echo("Initializing application database.")
     init_db()
-    click.echo("Initialized the database.")
+    click.echo("Initialized application database.")
 
 
 # register functions with the appliction instance given as argument

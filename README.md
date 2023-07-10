@@ -49,6 +49,6 @@ pyenv shell 3.10
 python -m venv venv
 source venv/bin/activate
 pip install -U pip
-pip install flask zipp
+pip install flask zipp black
 pip freeze > requirements.txt
 ```
