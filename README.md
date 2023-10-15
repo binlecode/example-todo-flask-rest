@@ -1,7 +1,14 @@
 # todos Flask RESTful API stack
 
-This todo app is REST only, no web UI.
+This todo app is REST a api stack.
+
 Also, this app uses raw sql executions for cruds.
+
+run dev server
+
+```sh
+FLASK_APP=rest FLASK_DEBUG=1 flask run
+```
 
 ## local development
 

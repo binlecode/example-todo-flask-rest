@@ -21,5 +21,5 @@ db.init_app(app)
 
 # load routes at the bottom
 # The bottom import is a workaround to avoid circular imports
-# todo: not good, need to adopt blueprint/app_factory pattern
+# todo: adopt blueprint/app_factory pattern
 from rest import routes
