@@ -1,13 +1,17 @@
 # todos Flask RESTful API stack
 
-This todo app is REST a api stack.
+This todo app provides REST api for todo crud service.
+It uses raw sql for resource persistence in sqlite3 database, in order to 
+demonstrate the low-level database initialization with flask application 
+instance.
 
-Also, this app uses raw sql executions for cruds.
-
-run dev server
+To run dev server:
 
 ```sh
 FLASK_APP=rest FLASK_DEBUG=1 flask run
+
+# run interactive shell
+FLASK_APP=rest FLASK_DEBUG=1 flask shell
 ```
 
 ## local development
@@ -36,18 +40,10 @@ flask run
 
 No need to re-run 'init-db' for successive runs unless a db reset is needed.
 
-## project structure
+## project bootstrap
 
-App structure:
-
-```
-rest
-|- __init__.py: package bootstrap
-|- db.py: database config and bootstrap
-|- schema.sql: DDL for db.py to initialize
-|- routes.py: routes and actions
-|- todos_app.py: main app entry for flask run
-```
+App structure is based on:
+[flaskr tutorial](https://flask.palletsprojects.com/en/2.0.x/tutorial/).
 
 Project dependencies:
 

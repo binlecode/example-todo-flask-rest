@@ -4,12 +4,13 @@ import click
 from flask import current_app
 from flask.cli import with_appcontext
 
-# g is simple namespace object that used to store
-# data that can access application level
-# data during a request.
-# g can be used as request scope storage and is reset for each request
-# g has same lifetime as application context
-# current_app is a proxy to application context
+# db module follows this guide:
+# https://flask.palletsprojects.com/en/2.0.x/tutorial/database/
+
+# g is simple namespace object that used to store data that can access
+# application level data during a request.
+# g can be used as request scope storage, it is reset for each request
+# g has same lifetime as application context.
 from flask import g
 
 
@@ -59,10 +60,12 @@ def load_db_command():
     click.echo("Loaded application data.")
 
 
-# register functions with the appliction instance given as argument
+# define an init_app function to register functions with the given appliction
+# instance
 def init_app(app):
+    # register close_db function with the application instance
     # close_db function is called after returning the response
     app.teardown_appcontext(close_db)
-    # adds command function that can be called with flask command
+    # register command function that can be called with flask command
     app.cli.add_command(init_db_command)
     app.cli.add_command(load_db_command)

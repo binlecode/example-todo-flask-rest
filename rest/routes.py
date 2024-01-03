@@ -4,15 +4,30 @@
 from werkzeug.exceptions import HTTPException
 import json
 import uuid
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from rest import app
 
 from . import todo_dao
 
 
 @app.route("/")
-def hello_world():
+def hello():
     return "Hello Todo App (REST + Sql)"
+
+
+@app.route("/health")
+def health():
+    result = {
+        "status": "ok",
+    }
+    routes = []
+    for rule in app.url_map.iter_rules():
+        methods = ",".join(sorted(rule.methods))
+        routes.append(
+            {"endpoint": rule.endpoint, "methods": methods, "rule": str(rule)}
+        )
+    result["routes"] = routes
+    return jsonify(result)
 
 
 @app.route("/todos", methods=["GET"])
