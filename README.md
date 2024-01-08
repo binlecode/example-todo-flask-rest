@@ -1,20 +1,12 @@
 # todos Flask RESTful API stack
 
-This todo app provides REST api for todo crud service.
-It uses raw sql for resource persistence in sqlite3 database, in order to 
-demonstrate the low-level database initialization with flask application 
-instance.
+This flask app includes:
 
-To run dev server:
+- REST api for todo crud service
+- raw sql for resource persistence, to show low-level database initialization
+- uses sqlite3 database, but can be swapped out for other relational databases
 
-```sh
-FLASK_APP=rest FLASK_DEBUG=1 flask run
-
-# run interactive shell
-FLASK_APP=rest FLASK_DEBUG=1 flask shell
-```
-
-## local development
+## local development server
 
 For a local development environment, use pyenv venv setup:
 
@@ -29,7 +21,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run flask:
+Run local flask development server:
 
 ```sh
 export FLASK_APP=rest
@@ -39,6 +31,12 @@ flask run
 ```
 
 No need to re-run 'init-db' for successive runs unless a db reset is needed.
+
+Run local flask shell:
+
+```sh
+FLASK_APP=rest FLASK_DEBUG=1 flask shell
+```
 
 ## project bootstrap
 
