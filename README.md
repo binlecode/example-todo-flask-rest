@@ -38,6 +38,13 @@ Run local flask shell:
 FLASK_APP=rest FLASK_DEBUG=1 flask shell
 ```
 
+Run local gunicorn wsgi server:
+
+```sh
+SCRIPT_NAME=/todo-flask-rest \
+gunicorn --bind :8000 -w 2 -t 2 --log-level=debug --access-logfile - --error-logfile - rest:app
+```
+
 ## project bootstrap
 
 App structure is based on:
@@ -50,6 +57,6 @@ pyenv shell 3.10
 python -m venv venv
 source venv/bin/activate
 pip install -U pip
-pip install flask zipp black
+pip install flask zipp black gunicorn
 pip freeze > requirements.txt
 ```
